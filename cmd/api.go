@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"make_parallel/internal/config"
+	"code_parallel/internal/config"
 )
 
 var apiCmd = &cobra.Command{

@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"make_parallel/internal/gemini"
-	"make_parallel/internal/queue"
+	"code_parallel/internal/gemini"
+	"code_parallel/internal/queue"
 )
 
 type TaskResult struct {
@@ -99,12 +99,24 @@ func worker(client *gemini.Client, taskChan <-chan queue.Task, resultChan chan<-
 func processTask(client *gemini.Client, task queue.Task, workerID int) TaskResult {
 	ctx := context.Background()
 	
+	// 既存ファイルの内容を読み込む
+	existingContents := make(map[string]string)
+	for _, outputFile := range task.OutputFiles {
+		if fileExists(outputFile) {
+			content, err := os.ReadFile(outputFile)
+			if err == nil {
+				existingContents[outputFile] = string(content)
+				fmt.Printf("📝 [Worker %d] Editing existing file: %s\n", workerID, outputFile)
+			}
+		}
+	}
+	
 	for attempt := 1; attempt <= 2; attempt++ {
 		if attempt > 1 {
 			fmt.Printf("🔄 [Worker %d] Retrying task: %s (attempt %d)\n", workerID, task.Description, attempt)
 		}
 		
-		content, err := client.GenerateCode(ctx, task.Description, task.UseDeep)
+		content, err := client.GenerateCode(ctx, task.Description, task.UseDeep, existingContents)
 		if err != nil {
 			if attempt == 2 {
 				return TaskResult{

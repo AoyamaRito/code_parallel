@@ -16,15 +16,15 @@
 
 ## ツール概要
 
-**see_parallel** と **make_parallel** は、AI-First開発を実現する2つの核となるツールです。
+**see_parallel** と **code_parallel** は、AI-First開発を実現する2つの核となるツールです。
 
 ### 基本コンセプト
 - **see_parallel**: 理解・分析に特化（複数ファイルを並列で分析）
-- **make_parallel**: 生成・実装に特化（複数ファイルを並列で生成）
+- **code_parallel**: 生成・実装に特化（複数ファイルを並列で生成）
 
 ### 実測パフォーマンス
 - **see_parallel**: 2つの深い分析を11秒で完了
-- **make_parallel**: 3ファイルを6.7秒で生成
+- **code_parallel**: 3ファイルを6.7秒で生成
 - **スケーラビリティ**: 1つでも50個でも実行時間はほぼ一定
 
 ## 共通仕様
@@ -99,53 +99,53 @@ see_parallel queue '["モジュール間の結合度は？", "src/**/*.ts"]'
 see_parallel queue '["設計パターンの使用状況は？", "lib/*.ts", "deep"]'
 ```
 
-## make_parallel - 生成・実装ツール
+## code_parallel - 生成・実装ツール
 
 ### 基本的な使い方
 
 #### 単一ファイル生成
 ```bash
-make_parallel queue '["認証機能を実装", "lib/auth-new.ts"]'
+code_parallel queue '["認証機能を実装", "lib/auth-new.ts"]'
 ```
 
 #### 複数ファイル生成
 ```bash
-make_parallel queue '["CRUD APIを実装", "api/users.ts", "api/posts.ts", "api/comments.ts"]'
+code_parallel queue '["CRUD APIを実装", "api/users.ts", "api/posts.ts", "api/comments.ts"]'
 ```
 
 #### 複雑な実装（上位モデル）
 ```bash
-make_parallel queue '["高性能なアルゴリズムを実装", "lib/optimization.ts", "deep"]'
+code_parallel queue '["高性能なアルゴリズムを実装", "lib/optimization.ts", "deep"]'
 ```
 
 ### 実用的なタスク例
 
 #### 基本的なコンポーネント
 ```bash
-make_parallel queue '["再利用可能なボタンコンポーネント", "components/Button.tsx"]'
-make_parallel queue '["データテーブルコンポーネント", "components/DataTable.tsx"]'
-make_parallel queue '["モーダルダイアログ", "components/Modal.tsx"]'
+code_parallel queue '["再利用可能なボタンコンポーネント", "components/Button.tsx"]'
+code_parallel queue '["データテーブルコンポーネント", "components/DataTable.tsx"]'
+code_parallel queue '["モーダルダイアログ", "components/Modal.tsx"]'
 ```
 
 #### ビジネスロジック
 ```bash
-make_parallel queue '["ユーザー管理サービス", "services/userService.ts"]'
-make_parallel queue '["決済処理ロジック", "lib/payment.ts", "deep"]'
-make_parallel queue '["データ変換ユーティリティ", "utils/transform.ts"]'
+code_parallel queue '["ユーザー管理サービス", "services/userService.ts"]'
+code_parallel queue '["決済処理ロジック", "lib/payment.ts", "deep"]'
+code_parallel queue '["データ変換ユーティリティ", "utils/transform.ts"]'
 ```
 
 #### API実装
 ```bash
-make_parallel queue '["RESTful ユーザーAPI", "api/users.ts"]'
-make_parallel queue '["GraphQL リゾルバ", "graphql/resolvers.ts"]'
-make_parallel queue '["WebSocket ハンドラ", "ws/handlers.ts"]'
+code_parallel queue '["RESTful ユーザーAPI", "api/users.ts"]'
+code_parallel queue '["GraphQL リゾルバ", "graphql/resolvers.ts"]'
+code_parallel queue '["WebSocket ハンドラ", "ws/handlers.ts"]'
 ```
 
 #### テストコード
 ```bash
-make_parallel queue '["単体テスト", "tests/auth.test.ts"]'
-make_parallel queue '["統合テスト", "tests/integration.test.ts"]'
-make_parallel queue '["E2Eテスト", "e2e/user-flow.test.ts"]'
+code_parallel queue '["単体テスト", "tests/auth.test.ts"]'
+code_parallel queue '["統合テスト", "tests/integration.test.ts"]'
+code_parallel queue '["E2Eテスト", "e2e/user-flow.test.ts"]'
 ```
 
 ## 効率的なワークフロー
@@ -160,10 +160,10 @@ see_parallel queue run --parallel 10
 
 # 2. 実装計画の立案（結果を確認後）
 # 3. 新機能の実装
-make_parallel queue '["改良版認証システム", "lib/auth-v2.ts"]'
-make_parallel queue '["新しいAPIエンドポイント", "api/v2/users.ts"]'
-make_parallel queue '["対応するフロントエンド", "components/AuthV2.tsx"]'
-make_parallel queue run --parallel 5
+code_parallel queue '["改良版認証システム", "lib/auth-v2.ts"]'
+code_parallel queue '["新しいAPIエンドポイント", "api/v2/users.ts"]'
+code_parallel queue '["対応するフロントエンド", "components/AuthV2.tsx"]'
+code_parallel queue run --parallel 5
 
 # 4. 品質確認
 see_parallel queue '["生成されたコードの品質は？", "lib/auth-v2.ts", "deep"]'
@@ -186,15 +186,15 @@ see_parallel queue run --parallel 4
 ```bash
 # 現在のキューを確認
 see_parallel queue list
-make_parallel queue list
+code_parallel queue list
 
 # 実行
 see_parallel queue run --parallel 10
-make_parallel queue run --parallel 5
+code_parallel queue run --parallel 5
 
 # キューをクリア
 see_parallel queue clear
-make_parallel queue clear
+code_parallel queue clear
 ```
 
 ### 並列数の選択指針
@@ -209,33 +209,33 @@ make_parallel queue clear
 
 ```bash
 # プロジェクト情報を設定
-make_parallel context set "Next.js 15 TypeScriptプロジェクト、Tailwind CSS使用"
+code_parallel context set "Next.js 15 TypeScriptプロジェクト、Tailwind CSS使用"
 see_parallel context set "Next.js 15 TypeScriptプロジェクト、Tailwind CSS使用"
 
 # より詳細な設定例
-make_parallel context set "Next.js TypeScript、AI-First原則でコード重複推奨、Turso DB使用"
+code_parallel context set "Next.js TypeScript、AI-First原則でコード重複推奨、Turso DB使用"
 see_parallel context set "工場-顧客コミュニケーションシステム、Magic Link認証"
 ```
 
 ### コンテキストの確認・管理
 ```bash
 # 現在の設定を確認
-make_parallel context show
+code_parallel context show
 see_parallel context get
 
 # 設定をクリア
-make_parallel context clear
+code_parallel context clear
 see_parallel context clear
 ```
 
 ### コンテキストの効果
 ```bash
 # Before（コンテキストなし）
-make_parallel queue '["REST API実装", "api/users.ts"]'
+code_parallel queue '["REST API実装", "api/users.ts"]'
 → PythonのFlaskコードが生成される...？
 
 # After（コンテキストあり）
-make_parallel queue '["REST API実装", "api/users.ts"]'
+code_parallel queue '["REST API実装", "api/users.ts"]'
 → Next.js API Routes、TypeScript、Tailwind CSSで生成！
 ```
 
@@ -244,13 +244,13 @@ make_parallel queue '["REST API実装", "api/users.ts"]'
 ### 初回設定
 ```bash
 see_parallel api set "your-gemini-api-key"
-make_parallel api set "your-gemini-api-key"
+code_parallel api set "your-gemini-api-key"
 ```
 
 ### 設定確認
 ```bash
 see_parallel api status
-make_parallel api status
+code_parallel api status
 ```
 
 ## ベストプラクティス
@@ -304,10 +304,10 @@ see_parallel queue '["重複コード検出", "**/*.ts", "deep"]'
 see_parallel queue run --parallel 2
 
 # 2. 新設計実装
-make_parallel queue '["モジュラー認証システム", "lib/auth/index.ts"]'
-make_parallel queue '["型安全なAPIクライアント", "lib/api/client.ts"]'
-make_parallel queue '["共通ユーティリティ", "lib/utils/index.ts"]'
-make_parallel queue run --parallel 3
+code_parallel queue '["モジュラー認証システム", "lib/auth/index.ts"]'
+code_parallel queue '["型安全なAPIクライアント", "lib/api/client.ts"]'
+code_parallel queue '["共通ユーティリティ", "lib/utils/index.ts"]'
+code_parallel queue run --parallel 3
 ```
 
 ---

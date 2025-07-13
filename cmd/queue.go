@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"make_parallel/internal/queue"
-	"make_parallel/internal/executor"
+	"code_parallel/internal/queue"
+	"code_parallel/internal/executor"
 )
 
 var queueCmd = &cobra.Command{

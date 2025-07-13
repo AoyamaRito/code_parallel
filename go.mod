@@ -1,4 +1,4 @@
-module make_parallel
+module code_parallel
 
 go 1.21
 

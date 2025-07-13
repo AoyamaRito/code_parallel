@@ -5,7 +5,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "make_parallel",
+	Use:   "code_parallel",
 	Short: "Parallel AI task execution tool",
 	Long:  "A tool for executing AI tasks in parallel using Gemini API",
 }

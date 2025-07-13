@@ -1,8 +1,8 @@
 # Binaries
-make_parallel
+code_parallel
 
 # Local config files (API keys should be global only)
-.make_parallel_config.json
+.code_parallel_config.json
 
 # IDE
 .vscode/

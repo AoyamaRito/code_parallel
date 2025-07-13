@@ -20,7 +20,7 @@ type Queue struct {
 }
 
 func getQueuePath() string {
-	return filepath.Join(".", ".make_parallel_queue.json")
+	return filepath.Join(".", ".code_parallel_queue.json")
 }
 
 func loadQueue() (*Queue, error) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"make_parallel/cmd"
+	"code_parallel/cmd"
 )
 
 func main() {

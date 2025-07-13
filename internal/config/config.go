@@ -16,11 +16,11 @@ func getGlobalConfigPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(homeDir, ".make_parallel_config.json"), nil
+	return filepath.Join(homeDir, ".code_parallel_config.json"), nil
 }
 
 func getLocalContextPath() string {
-	return filepath.Join(".", ".make_parallel_context.json")
+	return filepath.Join(".", ".code_parallel_context.json")
 }
 
 func loadGlobalConfig() (*Config, error) {
