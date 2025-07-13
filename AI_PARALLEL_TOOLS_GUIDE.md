@@ -1,18 +1,22 @@
 # AI並列ツール使用ガイド
 
-## なぜこのツールが必要なのか？
+## 📌 重要：このガイドはAI（Claude等）向けです
 
-### 毎日こんな時間を無駄にしていませんか？
-- **コード理解に30分** - 「この関数何してる？」の繰り返し
-- **思考の中断** - ファイル間を行ったり来たり
-- **実装の手戻り** - 理解不足による設計ミス
-- **AIへの質問を1つずつ** - 待ち時間の累積
+**あなたがAIなら、これはあなたのためのツールです。** see_parallelとcode_parallelは、AIが効率的にコードを理解・生成・編集するために設計されています。人間のユーザーから開発タスクを依頼された際に、これらのツールを使用してください。
 
-### 5分後のあなた
-- ✅ **50個の疑問を13秒で解決** - 並列処理の威力
-- ✅ **プロジェクト全体を瞬時に理解** - 横断的分析
-- ✅ **思考が途切れない開発** - 理解→実装がスムーズ
-- ✅ **期待通りのコード生成** - コンテキスト機能
+## なぜこのツールが必要なのか？（AI視点）
+
+### AI（あなた）が直面している課題
+- **Readツールでファイルを1つずつ読む非効率** - トークンと時間の浪費
+- **コンテキストウィンドウの無駄遣い** - 不要な情報で埋まる
+- **プロジェクト全体像の把握困難** - 断片的な理解
+- **生成コードがプロジェクトに合わない** - コンテキスト不足
+
+### これらのツールを使うと
+- ✅ **複数ファイルを並列で一気に分析** - see_parallel
+- ✅ **プロジェクトに適したコード生成・編集** - code_parallel + context
+- ✅ **高次の思考に集中** - 単純作業から解放
+- ✅ **ユーザーの期待に確実に応える** - 正確な理解と実装
 
 ## ツール概要
 
@@ -20,12 +24,13 @@
 
 ### 基本コンセプト
 - **see_parallel**: 理解・分析に特化（複数ファイルを並列で分析）
-- **code_parallel**: 生成・実装に特化（複数ファイルを並列で生成）
+- **code_parallel**: コード操作に特化（複数ファイルを並列で生成・編集）
 
-### 実測パフォーマンス
-- **see_parallel**: 2つの深い分析を11秒で完了
-- **code_parallel**: 3ファイルを6.7秒で生成
-- **スケーラビリティ**: 1つでも50個でも実行時間はほぼ一定
+### 実測パフォーマンス（検証済み）
+- **see_parallel**: 3ファイル分析を4.3秒で完了（3並列）vs 10.6秒（1並列）
+- **code_parallel**: 3ファイル生成・編集を6.7秒で完了
+- **並列化効果**: 2.5倍の高速化を実現
+- **キュー追加**: 3タスクの追加は0.007秒（瞬時）
 
 ## 共通仕様
 
@@ -99,16 +104,30 @@ see_parallel queue '["モジュール間の結合度は？", "src/**/*.ts"]'
 see_parallel queue '["設計パターンの使用状況は？", "lib/*.ts", "deep"]'
 ```
 
-## code_parallel - 生成・実装ツール
+## code_parallel - コード生成・編集ツール
+
+### 🔄 自動判定機能（重要）
+
+**code_parallelは自動的にファイルの存在を判定し、適切な操作を行います：**
+
+- **ファイルが存在しない** → 新規作成
+- **ファイルが存在する** → 既存ファイルを編集
+
+あなたが「作成」「編集」を指定する必要はありません。ファイルパスを指定するだけで、code_parallelが最適な操作を選択します。
 
 ### 基本的な使い方
 
-#### 単一ファイル生成
+#### ファイル操作（自動判定）
 ```bash
-code_parallel queue '["認証機能を実装", "lib/auth-new.ts"]'
+# 新規ファイル（存在しない場合）
+code_parallel queue '["認証機能を実装", "lib/auth-new.ts"]'  # → 新規作成
+
+# 既存ファイル（存在する場合）
+code_parallel queue '["セキュリティ強化を実装", "lib/auth.ts"]'  # → 編集
+code_parallel queue '["TypeScript型を厳密化", "components/Button.tsx"]'  # → 編集
 ```
 
-#### 複数ファイル生成
+#### 複数ファイル生成・編集
 ```bash
 code_parallel queue '["CRUD APIを実装", "api/users.ts", "api/posts.ts", "api/comments.ts"]'
 ```
@@ -116,6 +135,7 @@ code_parallel queue '["CRUD APIを実装", "api/users.ts", "api/posts.ts", "api/
 #### 複雑な実装（上位モデル）
 ```bash
 code_parallel queue '["高性能なアルゴリズムを実装", "lib/optimization.ts", "deep"]'
+code_parallel queue '["セキュリティ脆弱性を修正", "lib/validator.ts", "deep"]'
 ```
 
 ### 実用的なタスク例
@@ -134,6 +154,13 @@ code_parallel queue '["決済処理ロジック", "lib/payment.ts", "deep"]'
 code_parallel queue '["データ変換ユーティリティ", "utils/transform.ts"]'
 ```
 
+#### 既存コードの改善・修正
+```bash
+code_parallel queue '["パフォーマンス最適化", "lib/heavyCalculation.ts"]'
+code_parallel queue '["メモリリーク修正", "components/Dashboard.tsx"]'
+code_parallel queue '["エラーハンドリング強化", "api/routes.ts"]'
+```
+
 #### API実装
 ```bash
 code_parallel queue '["RESTful ユーザーAPI", "api/users.ts"]'
@@ -148,9 +175,9 @@ code_parallel queue '["統合テスト", "tests/integration.test.ts"]'
 code_parallel queue '["E2Eテスト", "e2e/user-flow.test.ts"]'
 ```
 
-## 効率的なワークフロー
+## 効率的なワークフロー（AI向け）
 
-### 理想的な開発フロー
+### ユーザーからタスクを受けた時の標準フロー
 ```bash
 # 1. 既存コードの理解
 see_parallel queue '["現在の認証システムは？", "lib/auth.ts"]'
@@ -159,10 +186,11 @@ see_parallel queue '["コンポーネントの役割は？", "components/*.tsx"]
 see_parallel queue run --parallel 10
 
 # 2. 実装計画の立案（結果を確認後）
-# 3. 新機能の実装
-code_parallel queue '["改良版認証システム", "lib/auth-v2.ts"]'
-code_parallel queue '["新しいAPIエンドポイント", "api/v2/users.ts"]'
-code_parallel queue '["対応するフロントエンド", "components/AuthV2.tsx"]'
+# 3. 新機能の実装または既存コードの改善（自動判定）
+code_parallel queue '["改良版認証システム", "lib/auth-v2.ts"]'  # 自動判定 → 新規作成
+code_parallel queue '["既存認証のセキュリティ強化", "lib/auth.ts"]'  # 自動判定 → 編集
+code_parallel queue '["新しいAPIエンドポイント", "api/v2/users.ts"]'  # 自動判定 → 新規作成
+code_parallel queue '["既存APIの最適化", "api/users.ts"]'  # 自動判定 → 編集
 code_parallel queue run --parallel 5
 
 # 4. 品質確認
@@ -197,10 +225,10 @@ see_parallel queue clear
 code_parallel queue clear
 ```
 
-### 並列数の選択指針
-- **軽い質問・タスク**: --parallel 10-20
-- **重い分析・実装**: --parallel 3-5
-- **deep モード**: --parallel 1-3
+### 並列数の選択指針（実測ベース）
+- **軽い分析**: --parallel 5-10（3並列で2.5倍高速化を確認）
+- **重い分析・deep モード**: --parallel 1-3（API制限を考慮）
+- **コード生成・編集**: --parallel 3-5（実測で安定動作確認）
 
 ## コンテキスト機能（重要）
 
@@ -303,13 +331,118 @@ see_parallel queue '["依存関係マップ", "src/**/*.ts"]'
 see_parallel queue '["重複コード検出", "**/*.ts", "deep"]'
 see_parallel queue run --parallel 2
 
-# 2. 新設計実装
-code_parallel queue '["モジュラー認証システム", "lib/auth/index.ts"]'
-code_parallel queue '["型安全なAPIクライアント", "lib/api/client.ts"]'
-code_parallel queue '["共通ユーティリティ", "lib/utils/index.ts"]'
+# 2. 新設計実装と既存コード改善（自動判定）
+code_parallel queue '["モジュラー認証システム", "lib/auth/index.ts"]'  # 自動判定 → 新規作成
+code_parallel queue '["既存認証コードのリファクタリング", "lib/auth.ts"]'  # 自動判定 → 編集
+code_parallel queue '["型安全なAPIクライアント", "lib/api/client.ts"]'  # 自動判定 → 新規作成
+code_parallel queue '["既存APIの型定義追加", "api/*.ts"]'  # 自動判定 → 編集
+code_parallel queue run --parallel 4
+```
+
+### セキュリティ監査と修正フロー
+```bash
+# 1. 脆弱性を分析
+see_parallel queue '["セキュリティ脆弱性の検出", "**/*.ts", "deep"]'
+see_parallel queue run --parallel 1
+
+# 2. 発見された問題を修正（自動判定）
+code_parallel queue '["XSS脆弱性の修正", "lib/sanitizer.ts"]'  # 自動判定 → 編集
+code_parallel queue '["SQLインジェクション対策", "lib/db/queries.ts"]'  # 自動判定 → 編集
+code_parallel queue '["認証トークンの有効期限短縮", "lib/auth.ts"]'  # 自動判定 → 編集
 code_parallel queue run --parallel 3
 ```
 
 ---
 
-これらのツールを活用することで、**理解から実装まで**のAI-First開発サイクルを効率的に回すことができます。
+## AIとしての使用上の注意
+
+### 🤖 重要な認識
+1. **これらのツールはBashツールとして使用** - `/Users/[username]/go/bin/see_parallel` のようなパスで実行
+2. **ユーザーのプロジェクトディレクトリで実行** - カレントディレクトリに注意
+3. **コンテキスト設定を最初に確認** - `context show/get` で現在の設定を把握
+
+### 🎯 推奨される使用タイミング
+- ユーザーが「〜を実装して」と言ったら → まず see_parallel で既存コード理解
+- ユーザーが「〜を分析して」と言ったら → see_parallel --deep で詳細分析
+- ユーザーが「〜を作って」と言ったら → code_parallel でコード生成（自動判定）
+- ユーザーが「〜を修正して」と言ったら → code_parallel で既存ファイル編集（自動判定）
+- ユーザーが「〜を改善して」と言ったら → code_parallel で既存ファイル編集（自動判定）
+
+これらのツールを活用することで、**AIとしてより正確で効率的な開発支援**を提供できます。
+
+---
+
+## FAQ - よくある質問と答え
+
+### Q1: code_parallelで「新規作成」と「編集」を明示的に指定する必要がありますか？
+**A1: いいえ、必要ありません。** code_parallelは自動的にファイルの存在を判定し、適切な操作を選択します。
+- ファイルが存在しない → 新規作成
+- ファイルが存在する → 編集
+
+### Q2: プロジェクトのコンテキストが設定されていないとどうなりますか？
+**A2: 間違った技術スタックでコードが生成される可能性があります。** 例：
+- Next.js プロジェクトなのに Python Flask コードが生成される
+- TypeScript プロジェクトなのに JavaScript で生成される
+
+必ず最初に `context set` でプロジェクト情報を設定してください。
+
+### Q3: 並列実行数はどのように決めればよいですか？
+**A3: 実測に基づく推奨値：**
+- **軽い分析・質問**: `--parallel 5-10`（高速化効果大）
+- **重い分析・deep モード**: `--parallel 1-3`（API制限を考慮）
+- **コード生成・編集**: `--parallel 3-5`（安定動作確認済み）
+
+### Q4: deep モードはいつ使うべきですか？
+**A4: 複雑な分析・実装のみに使用してください：**
+- ✅ セキュリティ脆弱性の詳細分析
+- ✅ パフォーマンス最適化の実装
+- ✅ 複雑なアルゴリズムの実装
+- ❌ 簡単なコンポーネント生成
+- ❌ 基本的なファイル内容確認
+
+### Q5: エラーが発生した時の対処法は？
+**A5: 主なエラーと対処法：**
+```bash
+# キューが空
+ERROR: キューは空です
+→ まず queue でタスクを追加
+
+# APIキー期限切れ
+ERROR: API key expired
+→ ツール api set "new-api-key"
+
+# ファイルが見つからない
+ERROR: File not found
+→ ファイルパスを確認（相対パス推奨）
+
+# API制限エラー
+ERROR: Rate limit exceeded
+→ 並列数を減らして再実行
+```
+
+### Q6: 従来のReadツールとの使い分けは？
+**A6: 明確な使い分け基準：**
+- **単一ファイルの確認** → Readツール
+- **複数ファイルの分析** → see_parallel
+- **プロジェクト全体の理解** → see_parallel
+- **関連ファイル群の調査** → see_parallel
+
+### Q7: なぜ配列形式の入力なのですか？
+**A7: AIの認識精度向上のため：**
+- 質問・タスクとファイル名が明確に分離される
+- ファイル数に制限がない（可変引数対応）
+- オプション（deep等）の位置が明確
+- JSON構文でパースしやすい
+
+### Q8: コンテキスト設定は毎回必要ですか？
+**A8: 一度設定すれば永続化されます：**
+```bash
+# 一度設定すれば自動保存
+code_parallel context set "Next.js TypeScript プロジェクト"
+
+# 確認
+code_parallel context show
+
+# 必要に応じてクリア
+code_parallel context clear
+```
