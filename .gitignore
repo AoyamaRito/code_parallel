@@ -1,0 +1,13 @@
+# Binaries
+make_parallel
+
+# Local config files (API keys should be global only)
+.make_parallel_config.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
