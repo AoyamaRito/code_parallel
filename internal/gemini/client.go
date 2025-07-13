@@ -46,7 +46,28 @@ func (c *Client) GenerateCode(ctx context.Context, prompt string, useDeep bool) 
 
 	model := c.client.GenerativeModel(modelName)
 	
-	fullPrompt := fmt.Sprintf(`タスク: %s
+	// プロジェクトコンテキストを取得
+	projectContext, err := config.GetContext()
+	if err != nil {
+		return "", fmt.Errorf("failed to get context: %w", err)
+	}
+
+	var fullPrompt string
+	if projectContext != "" {
+		fullPrompt = fmt.Sprintf(`プロジェクト背景: %s
+
+タスク: %s
+
+以下の要件に従ってコードを生成してください：
+- プロジェクト背景を考慮した実装をしてください
+- 実装可能で動作するコードを生成
+- 適切なエラーハンドリングを含める
+- コメントは日本語で記述
+- ベストプラクティスに従う
+
+コードのみを出力してください（説明文は不要）:`, projectContext, prompt)
+	} else {
+		fullPrompt = fmt.Sprintf(`タスク: %s
 
 以下の要件に従ってコードを生成してください：
 - 実装可能で動作するコードを生成
@@ -55,6 +76,7 @@ func (c *Client) GenerateCode(ctx context.Context, prompt string, useDeep bool) 
 - ベストプラクティスに従う
 
 コードのみを出力してください（説明文は不要）:`, prompt)
+	}
 
 	resp, err := model.GenerateContent(ctx, genai.Text(fullPrompt))
 	if err != nil {
