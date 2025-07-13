@@ -64,21 +64,22 @@ func ExecuteTasks(tasks []queue.Task, maxWorkers int) error {
 
 	duration := time.Since(startTime)
 	
-	fmt.Printf("\n実行完了:\n")
+	fmt.Printf("\n生成されたファイル:\n")
 	if len(createdFiles) > 0 {
-		fmt.Printf("生成されたファイル:\n")
 		for _, file := range createdFiles {
 			if fileExists(file) {
 				fmt.Printf("- %s (新規作成)\n", file)
 			}
 		}
+	} else {
+		fmt.Printf("- なし\n")
 	}
 	
 	if failedTasks > 0 {
-		fmt.Printf("失敗したタスク: %d件\n", failedTasks)
+		fmt.Printf("\n失敗したタスク: %d件\n", failedTasks)
 	}
 	
-	fmt.Printf("実行時間: %.1f秒\n", duration.Seconds())
+	fmt.Printf("\n実行時間: %.1f秒\n", duration.Seconds())
 	fmt.Printf("並列数: %d\n", maxWorkers)
 
 	return nil

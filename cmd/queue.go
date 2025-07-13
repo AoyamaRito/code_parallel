@@ -15,7 +15,7 @@ var queueCmd = &cobra.Command{
 }
 
 var queueAddCmd = &cobra.Command{
-	Use:   "queue [task-json]",
+	Use:   "[task-json]",
 	Short: "Add task to queue",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -47,7 +47,8 @@ var queueAddCmd = &cobra.Command{
 			return fmt.Errorf("failed to add task: %w", err)
 		}
 
-		fmt.Printf("Task added: %s\n", description)
+		tasks, _ := queue.GetTasks()
+		fmt.Printf("キューに追加しました: [%d] %s\n", len(tasks), description)
 		return nil
 	},
 }
@@ -64,11 +65,11 @@ var queueRunCmd = &cobra.Command{
 		}
 
 		if len(tasks) == 0 {
-			fmt.Println("No tasks in queue")
+			fmt.Println("キュー内にタスクがありません")
 			return nil
 		}
 
-		fmt.Printf("Executing %d tasks with %d workers...\n", len(tasks), parallel)
+		fmt.Printf("コード生成を開始します... (タスク数: %d, 並列数: %d)\n", len(tasks), parallel)
 		
 		if err := executor.ExecuteTasks(tasks, parallel); err != nil {
 			return fmt.Errorf("execution failed: %w", err)
@@ -92,19 +93,26 @@ var queueListCmd = &cobra.Command{
 		}
 
 		if len(tasks) == 0 {
-			fmt.Println("No tasks in queue")
+			fmt.Println("キュー内のタスク数: 0")
 			return nil
 		}
 
-		fmt.Printf("Queue contains %d tasks:\n", len(tasks))
+		fmt.Printf("キュー内のタスク数: %d\n\n", len(tasks))
 		for i, task := range tasks {
-			model := "Gemini 2.0 Flash"
+			model := "Gemini 2.0 Flash Lite"
 			if task.UseDeep {
-				model = "Gemini 2.0 Pro"
+				model = "Gemini 2.0 Flash (deep)"
 			}
-			fmt.Printf("%d. %s (%s)\n", i+1, task.Description, model)
-			for _, file := range task.OutputFiles {
-				fmt.Printf("   -> %s\n", file)
+			fmt.Printf("[%d] %s\n", i+1, task.Description)
+			fmt.Printf("    出力ファイル: %s\n", task.OutputFiles[0])
+			if len(task.OutputFiles) > 1 {
+				for _, file := range task.OutputFiles[1:] {
+					fmt.Printf("                 %s\n", file)
+				}
+			}
+			fmt.Printf("    モデル: %s\n", model)
+			if i < len(tasks)-1 {
+				fmt.Println()
 			}
 		}
 		return nil
@@ -118,13 +126,15 @@ var queueClearCmd = &cobra.Command{
 		if err := queue.ClearTasks(); err != nil {
 			return fmt.Errorf("failed to clear tasks: %w", err)
 		}
-		fmt.Println("Queue cleared")
+		fmt.Println("キューをクリアしました")
 		return nil
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(queueAddCmd)
+	rootCmd.AddCommand(queueCmd)
+	queueCmd.RunE = queueAddCmd.RunE
+	queueCmd.Args = queueAddCmd.Args
 	queueCmd.AddCommand(queueRunCmd)
 	queueCmd.AddCommand(queueListCmd)
 	queueCmd.AddCommand(queueClearCmd)
